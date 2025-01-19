@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+# Path to Puppet environment
+REPO_DIR="/etc/puppetlabs/code/environments/production"
+
+# Log webhook event
+echo "$(date) - Webhook triggered" >> /var/log/github-webhook/event.log
+
+# Pull latest code from GitHub
+cd "$REPO_DIR"
+git reset --hard
+git pull origin main
+
+# Optionally trigger a Puppet run
+/opt/puppetlabs/bin/puppet agent -t >> /var/log/github-webhook/event.log 2>&1
